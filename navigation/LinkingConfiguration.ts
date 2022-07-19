@@ -8,6 +8,8 @@ import { LinkingOptions } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 
 import { RootStackParamList } from '../types';
+import Election from '../screens/Election/Index';
+import Community from '../screens/Community/Index';
 
 const linking: LinkingOptions<RootStackParamList> = {
   prefixes: [Linking.makeUrl('/')],
@@ -15,14 +17,14 @@ const linking: LinkingOptions<RootStackParamList> = {
     screens: {
       Root: {
         screens: {
-          TabOne: {
+          Election: {
             screens: {
-              TabOneScreen: 'one',
+              Election: 'one',
             },
           },
-          TabTwo: {
+          Community: {
             screens: {
-              TabTwoScreen: 'two',
+              Community: 'two',
             },
           },
         },

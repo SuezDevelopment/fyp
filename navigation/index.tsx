@@ -1,51 +1,120 @@
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
 import { FontAwesome } from '@expo/vector-icons';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
-
+// import * as Notifications from 'expo-notifications';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
+import AuthScreen from '../screens/Auth';
+import WelcomeScreen from '../screens/Welcome';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import Election from '../screens/Election/Index';
+import Community from '../screens/Election/Index';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import Announcement from '../screens/Election/Announcement';
+import Result from '../screens/Election/Result';
+import Vote from '../screens/Election/Vote';
+import Poll from '../screens/Community/Poll';
+import Profile from '../screens/Community/Profile';
+import Chat from '../screens/Community/Chat';
+import Invite from '../screens/Community/Invite';
+import AdminAuth from '../Admin';
+import NewInfo from '../Admin/screens/NewInfo';
+import Dashboard from '../Admin/screens/Dashboard';
+import Members from '../Admin/screens/Members';
+import { useAuthentication } from '../hooks/useAuth';
+
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+  const { user} = useAuthentication()
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootNavigator />
+      {user ? <RootNavigator />: <AuthNav />}
     </NavigationContainer>
   );
 }
 
-/**
- * A root stack navigator is often used for displaying modals on top of all other content.
- * https://reactnavigation.org/docs/modal
- */
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const CommunityStack = createNativeStackNavigator<RootStackParamList>();
+
+function CommunityScreens() {
+  return(
+    <CommunityStack.Navigator 
+    >
+      <CommunityStack.Screen name="FeaturedCommunity" component={Community} />
+      <CommunityStack.Screen name="Invite" component={Invite} />
+      <CommunityStack.Screen name="CommunityChat" component={Chat} />
+      <CommunityStack.Screen name="MemberProfile" component={Profile} />
+      <CommunityStack.Screen name="CommunityPoll" component={Poll} />
+    </CommunityStack.Navigator>
+  )
+}
+
+const AuthStack = createNativeStackNavigator<RootStackParamList>();
+
+function AuthNav() {
+  return(
+    <AuthStack.Navigator
+      initialRouteName='WelcomeScreen'
+    >
+      <AuthStack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
+      <AuthStack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
+    </AuthStack.Navigator>
+  );
+}
+
+const ElectionStack = createNativeStackNavigator<RootStackParamList>();
+
+function ElectionScreens() {
+  return(
+    <ElectionStack.Navigator>
+      <ElectionStack.Screen name='FeaturedElection' component={Election} />
+      <ElectionStack.Screen name='Annoucement' component={Announcement} />
+      <ElectionStack.Screen name='Vote' component={Vote} />
+      <ElectionStack.Screen name='Result' component={Result} />
+    </ElectionStack.Navigator>
+  )
+}
+
+const AdminStack = createNativeStackNavigator<RootStackParamList>();
+
+function AdminScreens() {
+  return(
+    <AdminStack.Navigator>
+      <AdminStack.Screen name="AdminAuth" component={AdminAuth} />
+      <AdminStack.Screen name="AdminDashboard" component={Dashboard} />
+      <AdminStack.Screen name="AdminMembers" component={Members} />
+      <AdminStack.Screen name="AdminAnnoucement" component={NewInfo} />
+      <AdminStack.Screen name="AdminAuth" component={AdminAuth} />
+    </AdminStack.Navigator>
+  )
+}
+
+const isAdmin = true
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
-    </Stack.Navigator>
+    isAdmin ? <AdminScreens/> : <BottomTabNavigator />
   );
 }
+
+// const DrawerNav = createDrawerNavigator()
+
+// function DrawerNavigator() {
+//   return (
+//     <DrawerNav.Navigator 
+//     >
+//       <DrawerNav.Screen name='Home' component={RootNavigator} options={{ headerShown: false }} />
+//     </DrawerNav.Navigator>
+//   )
+
+// }
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
@@ -58,15 +127,15 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Election"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}>
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
+        name="Election"
+        component={ElectionScreens}
+        options={({ navigation }: RootTabScreenProps<'Election'>) => ({
+          title: 'ELECTION',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Pressable
@@ -85,10 +154,10 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
+        name="Community"
+        component={CommunityScreens}
         options={{
-          title: 'Tab Two',
+          title: 'COMMUNITY',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
@@ -96,9 +165,7 @@ function BottomTabNavigator() {
   );
 }
 
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
+
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;

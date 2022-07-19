@@ -12,6 +12,21 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow to access your photos.",
+          "savePhotosPermission": "Allow to save photos.",
+          "cameraPermission": "Allow to open the camera",
+          "isAccessMediaLocationEnabled": true,
+          "microphonePermission": true
+        }
+      ],
+      "expo-image-picker",
+      "expo-document-picker",
+      "@react-native-firebase/app"
+    ],
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -19,16 +34,41 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.src.caleb",
+      "entitlements": {
+        "com.apple.developer.networking.wifi-info": true
+      },
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription":"Give permission to save photos",
+        "NSMicrophoneUsageDescription":"Give permission to use your microphone",
+        "NSCameraUsageDescription": "This app uses the camera to snap selfies or other photos",
+        "NSUserTrackingUsageDescription": "We use Tracking to fix bugs and improve your experience."
+      },
+      "usesIcloudStorage":true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions":["READ_EXTERNAL_STORAGE", "READ_PHONE_STATE","USE_BIOMETRIC", "WRITE_EXTERNAL_STORAGE", "USE_FINGERPRINT", "VIBRATE", "RECORD_AUDIO", "CAMERA"]
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "config":{
+        "firebase":{
+          "apiKey": "AIzaSyC2-a_LomCoLP3KkL_YA-c6nUO9HYd9NHc",
+          "authDomain": "src-app-79f70.firebaseapp.com",
+          "projectId": "src-app-79f70",
+          "databaseURL": "https://src-app-79f70.firebaseio.com",
+          "storageBucket": "src-app-79f70.appspot.com",
+          "messagingSenderId": "756313066590",
+          "appId": "1:756313066590:web:324c4efbad95d6af5278cf",
+          "measurementId": "G-13VVRSG5N6"
+        }
+      }
     }
+    
   }
 }
